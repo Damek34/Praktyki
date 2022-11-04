@@ -12,9 +12,10 @@
 
 </head>
 <body>
-    
+
     <header>
-        <h1>Architekci</h1>>
+        <img src="./zdj.png">
+        <h1>Architekci</h1>
     </header>
 
 <nav>
@@ -31,20 +32,28 @@
 <article>
     <p>Nazywamy się tak, bo jeden z naszych ulubionych zespołów muzycznych nazywa się w taki właśnie sposób. My jesteśmy Damian i Michał, a wy jesteście naszymi gośćmi.</p>
     <form id="formularz">
-
-        Imię <input type="text" value="" id = "imie">
-        Nazwisko <input type="text" value="" id = "nazwisko">
-        Wiek <input type="number" value="" id = "wiek">
-        Ulubiony kolor <input type="text" value="" id = "kolor">
-        <input type="button" value="Wyślij" onclick="Funkcja1()">
-
-
+        <div class="row">
+            <label for="imie">Imię</label>
+            <input type="text" id="imie" value="" class="input">
+        </div>
+        <div class="row">
+            <label for="nazwisko">Nazwisko</label>
+            <input type="text" value="" class="input" id="nazwisko">
+        </div>
+        <div class="row">
+            <label for="wiek">Wiek</label>
+            <input type="number" value="" class="input" id="wiek">
+        </div>
+        <div class="row">
+            <label for="kolor">Ulubiony kolor </label>
+            <input id="kolor" type="text" value="" class="input">
+        </div>
+        <input type="button" value="Wyślij" onclick="Funkcja1()" class="btn">
     </form>
 </article>
 
 <div id="walidacja"></div>
 
-<img src="">
 
 <footer>Damian Cichosz, Michał Grablowski</footer>
 
@@ -65,10 +74,14 @@ function Funkcja1()
      if(imie != "" && nazwisko != "" && wiek != "" && kolor != "")
      {
          document.getElementById("walidacja").innerHTML = "Sukces!"
+         document.getElementById("walidacja").style.backgroundColor = "rgb(31, 231, 75)"
+         document.getElementById("walidacja").style.filter = "opacity(100%)"
      }
      else
      {
         document.getElementById("walidacja").innerHTML = "Wszystkie pola muszą być wypełnione!"
+        document.getElementById("walidacja").style.backgroundColor = "rgb(158, 105, 92)"
+        document.getElementById("walidacja").style.filter = "opacity(100%)"
      }
 
 

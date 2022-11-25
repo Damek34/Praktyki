@@ -34,29 +34,52 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
-};
 var _this = this;
 var arr;
 var range = 30;
-fetch('https://hacker-news.firebaseio.com/v0/newstories.json?type=story')
-    .then(function (result) { return result.json(); })
-    .then(function (news) {
-    arr = __spreadArray([], news, true);
-    arr.slice(0, range).forEach(function (newsid) { return getNews(newsid); });
-});
-var getNews = function (id) { return __awaiter(_this, void 0, void 0, function () {
+var firstNews = 0;
+// zwraca tablice z id nowych newsow
+var getNewsIdList = function (first, range) { return __awaiter(_this, void 0, void 0, function () {
+    var _this = this;
     return __generator(this, function (_a) {
-        fetch("https://hacker-news.firebaseio.com/v0/item/".concat(id, ".json")).then(function (result) { return result.json(); })
-            .then(function (news) { return showItem(news); });
-        return [2 /*return*/];
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, fetch('https://hacker-news.firebaseio.com/v0/newstories.json?type=story')
+                    .then(function (result) { return result.json(); })
+                    .then(function (newsIdList) { return __awaiter(_this, void 0, void 0, function () {
+                    var _this = this;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                newsIdList = newsIdList.slice(first, range);
+                                return [4 /*yield*/, Promise.all(newsIdList.map(function (newsId) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, getNews(newsId)];
+                                            case 1: return [2 /*return*/, _a.sent()];
+                                        }
+                                    }); }); }))];
+                            case 1:
+                                arr = _a.sent();
+                                return [2 /*return*/, arr];
+                        }
+                    });
+                }); })];
+            case 1: return [2 /*return*/, _a.sent()];
+        }
+    });
+}); };
+// zwraca obiekt news
+var getNews = function (id) { return __awaiter(_this, void 0, void 0, function () {
+    var data, news;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, fetch("https://hacker-news.firebaseio.com/v0/item/".concat(id, ".json"))];
+            case 1:
+                data = _a.sent();
+                return [4 /*yield*/, data.json()];
+            case 2:
+                news = _a.sent();
+                return [2 /*return*/, news];
+        }
     });
 }); };
 var showItem = function (item) {
@@ -80,7 +103,17 @@ var showItem = function (item) {
     }
     var itemDate = document.createElement('p');
     var date = new Date(item.time * 1000);
-    itemDate.innerHTML = date.toUTCString();
+    itemDate.innerHTML += date.toLocaleDateString();
+    itemDate.innerHTML += " " + date.toLocaleTimeString('pl-PL');
+    itemDate.className += 'card-footer-item has-text-right';
+    itemFooter.appendChild(itemDate);
     listElement.appendChild(itemFooter);
     list === null || list === void 0 ? void 0 : list.appendChild(listElement);
 };
+var showNews = function (first, range) { return getNewsIdList(first, range).then(function (list) {
+    list.sort(function (a, b) { return a.time - b.time; });
+    list.forEach(function (news) {
+        showItem(news);
+    });
+}); };
+showNews(firstNews, range);

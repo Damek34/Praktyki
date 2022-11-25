@@ -1,20 +1,24 @@
-let arr: Array<number>
+let arr
 let range: number = 30
+let firstNews = 0
 
 // zwraca tablice z id nowych newsow
-fetch('https://hacker-news.firebaseio.com/v0/newstories.json?type=story')
-	.then((result) => result.json())
-	.then((news) => {
-		arr = [...news]
-		arr.slice(0, range).forEach(newsid => getNews(newsid))
-	});
+const getNewsIdList = async (first, range) => {
+	return await fetch('https://hacker-news.firebaseio.com/v0/newstories.json?type=story')
+		.then((result) => result.json())
+		.then(async (newsIdList: Array<number>) => {
+			newsIdList = newsIdList.slice(first, range);
+			arr = await Promise.all(newsIdList.map(async (newsId) => await getNews(newsId)));
+			return arr
+		});
+};
 
 // zwraca obiekt news
 const getNews = async (id) => {
-	fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`).then((result) => result.json())
-		.then((news) => showItem(news));
+	let data = await fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
+	let news = await data.json()
+	return news
 }
-
 
 const showItem = (item) => {
 	let list = document.getElementById('newsList')
@@ -40,9 +44,21 @@ const showItem = (item) => {
 
 	let itemDate = document.createElement('p')
 	let date = new Date(item.time * 1000)
-	itemDate.innerHTML = date.toUTCString()
+	itemDate.innerHTML += date.toLocaleDateString()
+	itemDate.innerHTML += " " + date.toLocaleTimeString('pl-PL')
+	itemDate.className += 'card-footer-item has-text-right'
+	itemFooter.appendChild(itemDate)
 
 	listElement.appendChild(itemFooter)
 
 	list?.appendChild(listElement)
 }
+
+const showNews = (first, range) => getNewsIdList(first, range).then((list)=> {
+	list.sort((a, b) => a.time - b.time)
+	list.forEach(news => {
+		showItem(news)
+	})
+})
+
+showNews(firstNews, range)

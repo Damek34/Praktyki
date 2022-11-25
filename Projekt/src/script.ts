@@ -1,5 +1,15 @@
 let arr
-let range: number = 30
+var range = 30;
+global.ChangeRange = () =>
+{
+	let select = document.getElementById("number_of_news") as HTMLSelectElement;
+	range = select.value
+	console.log(range);
+	showNews(firstNews, parseInt(range));
+}
+
+
+
 let firstNews = 0
 
 // zwraca tablice z id nowych newsow
@@ -21,6 +31,7 @@ const getNews = async (id) => {
 }
 
 const showItem = (item) => {
+
 	let list = document.getElementById('newsList')
 	let listElement = document.createElement('div')
 	listElement.className += 'card my-4'
@@ -55,6 +66,7 @@ const showItem = (item) => {
 }
 
 const showNews = (first, range) => getNewsIdList(first, range).then((list)=> {
+	document.getElementById('newsList').innerHTML = "";
 	list.sort((a, b) => a.time - b.time)
 	list.forEach(news => {
 		showItem(news)

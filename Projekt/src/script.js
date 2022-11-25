@@ -37,6 +37,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var _this = this;
 var arr;
 var range = 30;
+global.ChangeRange = function () {
+    var select = document.getElementById("number_of_news");
+    range = select.value;
+    console.log(range);
+    showNews(firstNews, parseInt(range));
+};
 var firstNews = 0;
 // zwraca tablice z id nowych newsow
 var getNewsIdList = function (first, range) { return __awaiter(_this, void 0, void 0, function () {
@@ -111,6 +117,7 @@ var showItem = function (item) {
     list === null || list === void 0 ? void 0 : list.appendChild(listElement);
 };
 var showNews = function (first, range) { return getNewsIdList(first, range).then(function (list) {
+    document.getElementById('newsList').innerHTML = "";
     list.sort(function (a, b) { return a.time - b.time; });
     list.forEach(function (news) {
         showItem(news);

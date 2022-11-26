@@ -5,6 +5,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<title>Document</title>
 </head>
 <body onload="onloadFun()">
@@ -14,13 +15,18 @@
 		<option value = "15" >15</option>
 		<option value = "20" >20</option>
 		<option value = "25" >25</option>
-		<option value = "30" selected="selected">30</option>
+		<option value = "30" selected>30</option>
 		<option value = "35" >35</option>
 		<option value = "40" >40</option>
 	</select>
 
 	<div class="container">
 		<div id="newsList" class=" my-2">
+		</div>
+		<div id="pageButtons" class="is-inline-flex is-justify-content-center is-align-content-center" style="width: 100%; gap: 8px;">
+			<button class="button" onclick="prevPage()"><i class="fa-solid fa-arrow-left"></i></button>
+			<p id="pageNumber" style="padding: 7px 0">0</p>
+			<button class="button" onclick="nextPage()"><i class="fa-solid fa-arrow-right"></i></button>
 		</div>
 	</div>
 

@@ -44,8 +44,21 @@ var range = 30;
 global.ChangeRange = function () {
     var select = document.getElementById("number_of_news");
     range = parseInt(select.value);
-    console.log(range);
-    loadNews(firstNewsNum, range);
+    loadNews(firstNewsNum * range, range);
+};
+global.prevPage = function () {
+    if (firstNewsNum > 0) {
+        firstNewsNum -= 1;
+        var p = document.getElementById('pageNumber');
+        p.innerHTML = firstNewsNum.toString();
+        loadNews(firstNewsNum * range, range);
+    }
+};
+global.nextPage = function () {
+    firstNewsNum += 1;
+    var p = document.getElementById('pageNumber');
+    p.innerHTML = firstNewsNum.toString();
+    loadNews(firstNewsNum * range, range);
 };
 // zwraca tablice z id nowych newsow
 var getNewsIdList = function () { return __awaiter(void 0, void 0, void 0, function () {
@@ -61,10 +74,10 @@ var getNewsIdList = function () { return __awaiter(void 0, void 0, void 0, funct
     });
 }); };
 // zwraca tablice newsow
-var getNewsList = function (newsIdList, first, range) { return __awaiter(void 0, void 0, void 0, function () {
+var getNewsList = function (first, range) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, Promise.all(newsIdList.slice(first, range).map(function (newsId) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+            case 0: return [4 /*yield*/, Promise.all(newsIdList.slice(first, first + range).map(function (newsId) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0: return [4 /*yield*/, getNewsData(newsId)];
                         case 1: return [2 /*return*/, _a.sent()];
@@ -97,14 +110,14 @@ var showItem = function (item) {
 // pobiera newsy gdy załaduje strone
 global.onloadFun = function () { return getNewsIdList().then(function (list) {
     newsIdList = list;
-    loadNews(firstNewsNum, range);
+    loadNews(firstNewsNum * range, range);
 }); };
 // pobiera dane
 var loadNews = function (first, range) { return __awaiter(void 0, void 0, void 0, function () {
     var newsListHTML;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, getNewsList(newsIdList, first, range)];
+            case 0: return [4 /*yield*/, getNewsList(first, range)];
             case 1:
                 newsList = _a.sent();
                 newsListHTML = document.getElementById('newsList');

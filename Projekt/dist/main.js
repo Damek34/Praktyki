@@ -9,6 +9,17 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+
+/***/ "./src/components.js":
+/*!***************************!*\
+  !*** ./src/components.js ***!
+  \***************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+eval("\r\nexports.__esModule = true;\r\nexports.getNewsView = void 0;\r\nvar getNewsView = function (item) {\r\n    var newsCard = document.createElement('div');\r\n    newsCard.className += 'card my-4';\r\n    var itemHeader = document.createElement('div');\r\n    itemHeader.className += 'card-header';\r\n    var itemFooter = document.createElement('div');\r\n    itemFooter.className += 'card-footer';\r\n    var itemTitle = document.createElement('p');\r\n    itemTitle.innerHTML = item.title;\r\n    itemTitle.className += 'card-header-title';\r\n    itemHeader.appendChild(itemTitle);\r\n    newsCard.appendChild(itemHeader);\r\n    if (item.text != null) {\r\n        var itemBody = document.createElement('p');\r\n        itemBody.innerHTML = item.text;\r\n        itemBody.className += 'card-content';\r\n        newsCard.appendChild(itemBody);\r\n    }\r\n    var itemDate = document.createElement('p');\r\n    var date = new Date(item.time * 1000);\r\n    itemDate.innerHTML += date.toLocaleDateString();\r\n    itemDate.innerHTML += \" \" + date.toLocaleTimeString('pl-PL');\r\n    itemDate.className += 'card-footer-item has-text-right';\r\n    itemFooter.appendChild(itemDate);\r\n    newsCard.appendChild(itemFooter);\r\n    //otwieranie linku\r\n    var newsLink = function (itemF) {\r\n        window.open(itemF.url, \"_blank\");\r\n    };\r\n    newsCard.addEventListener(\"click\", function () {\r\n        newsLink(item);\r\n    });\r\n    return newsCard;\r\n};\r\nexports.getNewsView = getNewsView;\r\n\n\n//# sourceURL=webpack://hackernews/./src/components.js?");
+
+/***/ }),
+
 /***/ "./src/script.js":
 /*!***********************!*\
   !*** ./src/script.js ***!

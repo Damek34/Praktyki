@@ -88,6 +88,5 @@ const showNews = (first, range) => getNewsIdList(first, range).then((list)=> {
 	list.forEach(news => {
 		showItem(news)
 	})
-})
+}
 
-showNews(firstNews, range)

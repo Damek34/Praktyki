@@ -4,12 +4,13 @@ let newsIdList
 let newsList
 let firstNewsNum = 0
 let range = 30;
+let sortingType: Function
 
 global.ChangeRange = () =>
 {
 	let select = document.getElementById("number_of_news") as HTMLSelectElement;
 	range = parseInt(select.value)
-	loadNews(firstNewsNum * range, range);
+	loadNews(firstNewsNum, range, sortingType);
 }
 
 global.prevPage = () => {
@@ -17,7 +18,7 @@ global.prevPage = () => {
 		firstNewsNum -= 1;
 		let p = document.getElementById('pageNumber') as HTMLParagraphElement
 		p.innerHTML = firstNewsNum.toString()
-		loadNews(firstNewsNum * range, range);
+		loadNews(firstNewsNum, range, sortingType);
 	}
 }
 
@@ -25,7 +26,13 @@ global.nextPage = () => {
 	firstNewsNum += 1;
 	let p = document.getElementById('pageNumber') as HTMLParagraphElement
 	p.innerHTML = firstNewsNum.toString()
-	loadNews(firstNewsNum * range, range);
+	loadNews(firstNewsNum, range, sortingType);
+}
+
+global.changeSortingType = () => {
+	let select = document.getElementById("sortingType") as HTMLSelectElement;
+	sortingType = select.value == "new" ? sortNew : sortBest
+	loadNews(firstNewsNum, range, sortingType);
 }
 
 // zwraca tablice z id nowych newsow
@@ -39,8 +46,18 @@ const getNewsIdList = async () => {
 
 
 // zwraca tablice newsow
-const getNewsList = async (first, range) => {
-	return await Promise.all(newsIdList.slice(first, first + range).map(async (newsId) => await getNewsData(newsId)));
+const getNewsList = async () => {
+	return await Promise.all(newsIdList.map(async (newsId) => await getNewsData(newsId)));
+}
+
+const getBestNewsList = async () => {
+	return await fetch('https://hacker-news.firebaseio.com/v0/beststories')
+		.then((result) => result.json())
+		.then(async (bestIdList) =>
+			await Promise.all(
+				bestIdList.map(async (newsId) => await getNewsData(newsId))
+			)
+		)
 }
 
 // zwraca obiekt news
@@ -57,24 +74,29 @@ const showItem = (item) => {
 }
 
 // pobiera newsy gdy załaduje strone
-global.onloadFun = () => getNewsIdList().then((list)=> {
+global.onloadFun = () => getNewsIdList().then(async (list)=> {
 	newsIdList = list
-	loadNews(firstNewsNum * range, range)
+	sortingType = sortNew
+	newsList = await getNewsList()
+	loadNews(firstNewsNum, range, sortingType)
 })
 
 // pobiera dane
-const loadNews = async (first, range) => {
-	newsList = await getNewsList(first, range)
+const loadNews = async (first, range, sortMethod) => {
+
 
 	let newsListHTML = document.getElementById('newsList') as HTMLDivElement;
 	newsListHTML.innerHTML = ""
-	newsList.sort((a, b) => b.time - a.time)
-	newsList.forEach(news => {
+
+	newsList.sort((a, b) => sortMethod(a, b))
+
+	newsList.slice(first * range, first*range + range).forEach(news => {
 		showItem(news)
 	})
-
-
 }
+
+const sortNew = (a, b) => b.time - a.time
+const sortBest = (a, b) => b.score - a.score
 
 global.hide = (itemF) => 
 {
@@ -82,3 +104,4 @@ global.hide = (itemF) =>
 	newsIdList.splice(id, 1); 
 	loadNews(firstNewsNum * range, range);
 }
+

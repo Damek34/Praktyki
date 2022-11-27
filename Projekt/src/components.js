@@ -5,13 +5,18 @@ var getNewsView = function (item) {
     var newsCard = document.createElement('div');
     newsCard.className += 'card my-4';
     var itemHeader = document.createElement('div');
-    itemHeader.className += 'card-header';
+    itemHeader.className += 'card-header inline-flex';
     var itemFooter = document.createElement('div');
     itemFooter.className += 'card-footer';
     var itemTitle = document.createElement('p');
     itemTitle.innerHTML = item.title;
     itemTitle.className += 'card-header-title';
+    // itemTitle.setAttribute('style', 'width: 60%')
+    var itemScore = document.createElement('p');
+    itemScore.innerHTML = item.score;
+    itemScore.setAttribute('style', 'width: 10%; text-algin:center');
     itemHeader.appendChild(itemTitle);
+    itemHeader.appendChild(itemScore);
     newsCard.appendChild(itemHeader);
     if (item.text != null) {
         var itemBody = document.createElement('p');

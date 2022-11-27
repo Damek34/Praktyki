@@ -41,24 +41,30 @@ var newsIdList;
 var newsList;
 var firstNewsNum = 0;
 var range = 30;
+var sortingType;
 global.ChangeRange = function () {
     var select = document.getElementById("number_of_news");
     range = parseInt(select.value);
-    loadNews(firstNewsNum * range, range);
+    loadNews(firstNewsNum, range, sortingType);
 };
 global.prevPage = function () {
     if (firstNewsNum > 0) {
         firstNewsNum -= 1;
         var p = document.getElementById('pageNumber');
         p.innerHTML = firstNewsNum.toString();
-        loadNews(firstNewsNum * range, range);
+        loadNews(firstNewsNum, range, sortingType);
     }
 };
 global.nextPage = function () {
     firstNewsNum += 1;
     var p = document.getElementById('pageNumber');
     p.innerHTML = firstNewsNum.toString();
-    loadNews(firstNewsNum * range, range);
+    loadNews(firstNewsNum, range, sortingType);
+};
+global.changeSortingType = function () {
+    var select = document.getElementById("sortingType");
+    sortingType = select.value == "new" ? sortNew : sortBest;
+    loadNews(firstNewsNum, range, sortingType);
 };
 // zwraca tablice z id nowych newsow
 var getNewsIdList = function () { return __awaiter(void 0, void 0, void 0, function () {
@@ -77,12 +83,34 @@ var getNewsIdList = function () { return __awaiter(void 0, void 0, void 0, funct
 var getNewsList = function (first, range) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, Promise.all(newsIdList.slice(first, first + range).map(function (newsId) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+            case 0: return [4 /*yield*/, Promise.all(newsIdList.map(function (newsId) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0: return [4 /*yield*/, getNewsData(newsId)];
                         case 1: return [2 /*return*/, _a.sent()];
                     }
                 }); }); }))];
+            case 1: return [2 /*return*/, _a.sent()];
+        }
+    });
+}); };
+var getBestNewsList = function () { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, fetch('https://hacker-news.firebaseio.com/v0/beststories')
+                    .then(function (result) { return result.json(); })
+                    .then(function (bestIdList) { return __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, Promise.all(bestIdList.map(function (newsId) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4 /*yield*/, getNewsData(newsId)];
+                                        case 1: return [2 /*return*/, _a.sent()];
+                                    }
+                                }); }); }))];
+                            case 1: return [2 /*return*/, _a.sent()];
+                        }
+                    });
+                }); })];
             case 1: return [2 /*return*/, _a.sent()];
         }
     });
@@ -108,25 +136,32 @@ var showItem = function (item) {
     list === null || list === void 0 ? void 0 : list.appendChild((0, components_1.getNewsView)(item));
 };
 // pobiera newsy gdy załaduje strone
-global.onloadFun = function () { return getNewsIdList().then(function (list) {
-    newsIdList = list;
-    loadNews(firstNewsNum * range, range);
-}); };
-// pobiera dane
-var loadNews = function (first, range) { return __awaiter(void 0, void 0, void 0, function () {
-    var newsListHTML;
+global.onloadFun = function () { return getNewsIdList().then(function (list) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, getNewsList(first, range)];
+            case 0:
+                newsIdList = list;
+                sortingType = sortNew;
+                return [4 /*yield*/, getNewsList(firstNewsNum, range)];
             case 1:
                 newsList = _a.sent();
-                newsListHTML = document.getElementById('newsList');
-                newsListHTML.innerHTML = "";
-                newsList.sort(function (a, b) { return b.time - a.time; });
-                newsList.forEach(function (news) {
-                    showItem(news);
-                });
+                loadNews(firstNewsNum, range, sortingType);
                 return [2 /*return*/];
         }
     });
+}); }); };
+// pobiera dane
+var loadNews = function (first, range, sortMethod) { return __awaiter(void 0, void 0, void 0, function () {
+    var newsListHTML;
+    return __generator(this, function (_a) {
+        newsListHTML = document.getElementById('newsList');
+        newsListHTML.innerHTML = "";
+        newsList.sort(function (a, b) { return sortMethod(a, b); });
+        newsList.slice(first * range, first * range + range).forEach(function (news) {
+            showItem(news);
+        });
+        return [2 /*return*/];
+    });
 }); };
+var sortNew = function (a, b) { return b.time - a.time; };
+var sortBest = function (a, b) { return b.score - a.score; };

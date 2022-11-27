@@ -5,12 +5,17 @@ let newsList
 let firstNewsNum = 0
 let range = 30;
 let sortingType: Function
+let curNewsList
+let askStoryList
+let jobStoryList
+let topStoryList
+let bestStoryList
 
 global.ChangeRange = () =>
 {
 	let select = document.getElementById("number_of_news") as HTMLSelectElement;
 	range = parseInt(select.value)
-	loadNews(firstNewsNum, range, sortingType);
+	loadNews(firstNewsNum, range, sortingType, curNewsList);
 }
 
 global.prevPage = () => {
@@ -18,26 +23,69 @@ global.prevPage = () => {
 		firstNewsNum -= 1;
 		let p = document.getElementById('pageNumber') as HTMLParagraphElement
 		p.innerHTML = firstNewsNum.toString()
-		loadNews(firstNewsNum, range, sortingType);
+		loadNews(firstNewsNum, range, sortingType, curNewsList);
 	}
 }
 
 global.nextPage = () => {
-	firstNewsNum += 1;
-	let p = document.getElementById('pageNumber') as HTMLParagraphElement
-	p.innerHTML = firstNewsNum.toString()
-	loadNews(firstNewsNum, range, sortingType);
+	if (firstNewsNum <= curNewsList.length / range) {
+		firstNewsNum += 1;
+		let p = document.getElementById('pageNumber') as HTMLParagraphElement
+		p.innerHTML = firstNewsNum.toString()
+		loadNews(firstNewsNum, range, sortingType, curNewsList);
+	}
 }
 
 global.changeSortingType = () => {
 	let select = document.getElementById("sortingType") as HTMLSelectElement;
-	sortingType = select.value == "new" ? sortNew : sortBest
-	loadNews(firstNewsNum, range, sortingType);
+	switch (select.value) {
+		case "new":
+			sortingType = sortNew
+			break;
+		case "best":
+			sortingType = sortBest
+
+			break;
+		case "old":
+			sortingType = sortOld
+			break;
+
+		default:
+			sortingType = sortNew
+			break;
+	}
+	loadNews(firstNewsNum, range, sortingType, curNewsList);
+}
+
+global.changeNewsType = () => {
+	let select = document.getElementById("newsType") as HTMLSelectElement;
+	switch (select.value) {
+		case "today":
+			curNewsList = newsList
+			break;
+		case "ask":
+			curNewsList = askStoryList
+			break;
+		case 'job':
+			curNewsList = jobStoryList
+			break;
+		case 'past':
+			curNewsList = bestStoryList
+			break;
+		case 'welcome':
+			curNewsList = topStoryList
+			break;
+		default:
+			curNewsList = newsList
+			break;
+	}
+
+	loadNews(firstNewsNum, range, sortingType, curNewsList);
 }
 
 // zwraca tablice z id nowych newsow
 const getNewsIdList = async () => {
-	return await fetch('https://hacker-news.firebaseio.com/v0/newstories.json?type=story')
+	return await fetch('https://hacker-news.firebaseio.com/v0/newstories.json')
 		.then((result) => result.json())
 		.then((newsIdList: Array<number>) => {
 			return newsIdList
@@ -50,12 +98,12 @@ const getNewsList = async () => {
 	return await Promise.all(newsIdList.map(async (newsId) => await getNewsData(newsId)));
 }
 
-const getBestNewsList = async () => {
-	return await fetch('https://hacker-news.firebaseio.com/v0/beststories')
+const getStoriesList = async (type) => {
+	return await fetch(`https://hacker-news.firebaseio.com/v0/${type}.json`)
 		.then((result) => result.json())
-		.then(async (bestIdList) =>
+		.then(async (storiesIdList) =>
 			await Promise.all(
-				bestIdList.map(async (newsId) => await getNewsData(newsId))
+				storiesIdList.map(async (newsId) => await getNewsData(newsId))
 			)
 		)
 }
@@ -78,30 +126,37 @@ global.onloadFun = () => getNewsIdList().then(async (list)=> {
 	newsIdList = list
 	sortingType = sortNew
 	newsList = await getNewsList()
-	loadNews(firstNewsNum, range, sortingType)
+	curNewsList = newsList
+	loadNews(firstNewsNum, range, sortingType, newsList)
+	askStoryList = await getStoriesList('askstories')
+	jobStoryList = await getStoriesList('jobstories')
+	topStoryList = await getStoriesList('topstories')
+	bestStoryList = await getStoriesList('beststories')
+	let sel1 = document.getElementById('newsTypeDiv') as HTMLSelectElement
+	sel1.className = "select"
+	console.log("all loaded");
 })
 
 // pobiera dane
-const loadNews = async (first, range, sortMethod) => {
-
-
+const loadNews = async (first, range, sortMethod, list: Array<Object>) => {
 	let newsListHTML = document.getElementById('newsList') as HTMLDivElement;
 	newsListHTML.innerHTML = ""
 
-	newsList.sort((a, b) => sortMethod(a, b))
+	list.sort((a, b) => sortMethod(a, b))
 
-	newsList.slice(first * range, first*range + range).forEach(news => {
+	list.slice(first * range, first*range + range).forEach(news => {
 		showItem(news)
 	})
 }
 
 const sortNew = (a, b) => b.time - a.time
+const sortOld = (a, b) => a.time - b.time
 const sortBest = (a, b) => b.score - a.score
 
 global.hide = (itemF) =>
 {
 	let id = newsList.indexOf(itemF);
 	newsList.splice(id, 1);
-	loadNews(firstNewsNum * range, range, sortingType);
+	loadNews(firstNewsNum * range, range, sortingType, curNewsList);
 }
 

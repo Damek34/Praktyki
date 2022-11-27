@@ -10,22 +10,39 @@
 	<title>Document</title>
 </head>
 <body onload="onloadFun()">
-	<select id="number_of_news" onchange="ChangeRange()">
-		<option value = "5" >5</option>
-		<option value = "10" >10</option>
-		<option value = "15" >15</option>
-		<option value = "20" >20</option>
-		<option value = "25" >25</option>
-		<option value = "30" selected>30</option>
-		<option value = "35" >35</option>
-		<option value = "40" >40</option>
-	</select>
-	<select id="sortingType" onchange="changeSortingType()">
-		<option value = "new" selected>New</option>
-		<option value = "best">Best</option>
-	</select>
-
 	<div class="container">
+
+		<div class="field is-grouped">
+			<div class="control select">
+				<select id="number_of_news" onchange="ChangeRange()">
+					<option value = "5" >5</option>
+					<option value = "10" >10</option>
+					<option value = "15" >15</option>
+					<option value = "20" >20</option>
+					<option value = "25" >25</option>
+					<option value = "30" selected>30</option>
+					<option value = "35" >35</option>
+					<option value = "40" >40</option>
+				</select>
+			</div>
+			<div class="control select">
+				<select id="sortingType" onchange="changeSortingType()">
+					<option value = "new" selected>New</option>
+					<option value = "old">Old</option>
+					<option value = "best">Best</option>
+				</select>
+			</div>
+			<div class="control select is-loading" id="newsTypeDiv">
+				<select id="newsType" onchange="changeNewsType()">
+					<option value = "welcome">Welcome</option>
+					<option value = "todays" selected>New</option>
+					<option value = "past">Past</option>
+					<option value = "ask">Ask</option>
+					<option value = "job">Job</option>
+				</select>
+			</div>
+		</div>
+
 		<div id="newsList" class=" my-2">
 		</div>
 		<div id="pageButtons" class="is-inline-flex is-justify-content-center is-align-content-center" style="width: 100%; gap: 8px;">

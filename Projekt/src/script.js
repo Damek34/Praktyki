@@ -42,35 +42,79 @@ var newsList;
 var firstNewsNum = 0;
 var range = 30;
 var sortingType;
+var curNewsList;
+var askStoryList;
+var jobStoryList;
+var topStoryList;
+var bestStoryList;
 global.ChangeRange = function () {
     var select = document.getElementById("number_of_news");
     range = parseInt(select.value);
-    loadNews(firstNewsNum, range, sortingType);
+    loadNews(firstNewsNum, range, sortingType, curNewsList);
 };
 global.prevPage = function () {
     if (firstNewsNum > 0) {
         firstNewsNum -= 1;
         var p = document.getElementById('pageNumber');
         p.innerHTML = firstNewsNum.toString();
-        loadNews(firstNewsNum, range, sortingType);
+        loadNews(firstNewsNum, range, sortingType, curNewsList);
     }
 };
 global.nextPage = function () {
-    firstNewsNum += 1;
-    var p = document.getElementById('pageNumber');
-    p.innerHTML = firstNewsNum.toString();
-    loadNews(firstNewsNum, range, sortingType);
+    if (firstNewsNum <= curNewsList.length / range) {
+        firstNewsNum += 1;
+        var p = document.getElementById('pageNumber');
+        p.innerHTML = firstNewsNum.toString();
+        loadNews(firstNewsNum, range, sortingType, curNewsList);
+    }
 };
 global.changeSortingType = function () {
     var select = document.getElementById("sortingType");
-    sortingType = select.value == "new" ? sortNew : sortBest;
-    loadNews(firstNewsNum, range, sortingType);
+    switch (select.value) {
+        case "new":
+            sortingType = sortNew;
+            break;
+        case "best":
+            sortingType = sortBest;
+            break;
+        case "old":
+            sortingType = sortOld;
+            break;
+        default:
+            sortingType = sortNew;
+            break;
+    }
+    loadNews(firstNewsNum, range, sortingType, curNewsList);
+};
+global.changeNewsType = function () {
+    var select = document.getElementById("newsType");
+    switch (select.value) {
+        case "today":
+            curNewsList = newsList;
+            break;
+        case "ask":
+            curNewsList = askStoryList;
+            break;
+        case 'job':
+            curNewsList = jobStoryList;
+            break;
+        case 'past':
+            curNewsList = bestStoryList;
+            break;
+        case 'welcome':
+            curNewsList = topStoryList;
+            break;
+        default:
+            curNewsList = newsList;
+            break;
+    }
+    loadNews(firstNewsNum, range, sortingType, curNewsList);
 };
 // zwraca tablice z id nowych newsow
 var getNewsIdList = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, fetch('https://hacker-news.firebaseio.com/v0/newstories.json?type=story')
+            case 0: return [4 /*yield*/, fetch('https://hacker-news.firebaseio.com/v0/newstories.json')
                     .then(function (result) { return result.json(); })
                     .then(function (newsIdList) {
                     return newsIdList;
@@ -93,15 +137,15 @@ var getNewsList = function () { return __awaiter(void 0, void 0, void 0, functio
         }
     });
 }); };
-var getBestNewsList = function () { return __awaiter(void 0, void 0, void 0, function () {
+var getStoriesList = function (type) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, fetch('https://hacker-news.firebaseio.com/v0/beststories')
+            case 0: return [4 /*yield*/, fetch("https://hacker-news.firebaseio.com/v0/".concat(type, ".json"))
                     .then(function (result) { return result.json(); })
-                    .then(function (bestIdList) { return __awaiter(void 0, void 0, void 0, function () {
+                    .then(function (storiesIdList) { return __awaiter(void 0, void 0, void 0, function () {
                     return __generator(this, function (_a) {
                         switch (_a.label) {
-                            case 0: return [4 /*yield*/, Promise.all(bestIdList.map(function (newsId) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                            case 0: return [4 /*yield*/, Promise.all(storiesIdList.map(function (newsId) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
                                     switch (_a.label) {
                                         case 0: return [4 /*yield*/, getNewsData(newsId)];
                                         case 1: return [2 /*return*/, _a.sent()];
@@ -137,6 +181,7 @@ var showItem = function (item) {
 };
 // pobiera newsy gdy załaduje strone
 global.onloadFun = function () { return getNewsIdList().then(function (list) { return __awaiter(void 0, void 0, void 0, function () {
+    var sel1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -145,28 +190,45 @@ global.onloadFun = function () { return getNewsIdList().then(function (list) { r
                 return [4 /*yield*/, getNewsList()];
             case 1:
                 newsList = _a.sent();
-                loadNews(firstNewsNum, range, sortingType);
+                curNewsList = newsList;
+                loadNews(firstNewsNum, range, sortingType, newsList);
+                return [4 /*yield*/, getStoriesList('askstories')];
+            case 2:
+                askStoryList = _a.sent();
+                return [4 /*yield*/, getStoriesList('jobstories')];
+            case 3:
+                jobStoryList = _a.sent();
+                return [4 /*yield*/, getStoriesList('topstories')];
+            case 4:
+                topStoryList = _a.sent();
+                return [4 /*yield*/, getStoriesList('beststories')];
+            case 5:
+                bestStoryList = _a.sent();
+                sel1 = document.getElementById('newsTypeDiv');
+                sel1.className = "select";
+                console.log("all loaded");
                 return [2 /*return*/];
         }
     });
 }); }); };
 // pobiera dane
-var loadNews = function (first, range, sortMethod) { return __awaiter(void 0, void 0, void 0, function () {
+var loadNews = function (first, range, sortMethod, list) { return __awaiter(void 0, void 0, void 0, function () {
     var newsListHTML;
     return __generator(this, function (_a) {
         newsListHTML = document.getElementById('newsList');
         newsListHTML.innerHTML = "";
-        newsList.sort(function (a, b) { return sortMethod(a, b); });
-        newsList.slice(first * range, first * range + range).forEach(function (news) {
+        list.sort(function (a, b) { return sortMethod(a, b); });
+        list.slice(first * range, first * range + range).forEach(function (news) {
             showItem(news);
         });
         return [2 /*return*/];
     });
 }); };
 var sortNew = function (a, b) { return b.time - a.time; };
+var sortOld = function (a, b) { return a.time - b.time; };
 var sortBest = function (a, b) { return b.score - a.score; };
 global.hide = function (itemF) {
     var id = newsList.indexOf(itemF);
     newsList.splice(id, 1);
-    loadNews(firstNewsNum * range, range, sortingType);
+    loadNews(firstNewsNum * range, range, sortingType, curNewsList);
 };

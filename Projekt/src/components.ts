@@ -28,5 +28,16 @@ export const getNewsView = (item) => {
 
 	newsCard.appendChild(itemFooter)
 
+	//otwieranie linku
+	const newsLink = (itemF) =>
+	{
+		window.open (itemF.url, "_blank");
+	} 
+
+		newsCard.addEventListener("click", function()
+	{
+		newsLink(item);
+	});
+
 	return newsCard
 }

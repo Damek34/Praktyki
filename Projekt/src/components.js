@@ -26,6 +26,13 @@ var getNewsView = function (item) {
     itemDate.className += 'card-footer-item has-text-right';
     itemFooter.appendChild(itemDate);
     newsCard.appendChild(itemFooter);
+    //otwieranie linku
+    var newsLink = function (itemF) {
+        window.open(itemF.url, "_blank");
+    };
+    newsCard.addEventListener("click", function () {
+        newsLink(item);
+    });
     return newsCard;
 };
 exports.getNewsView = getNewsView;

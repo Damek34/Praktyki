@@ -97,3 +97,11 @@ const loadNews = async (first, range, sortMethod) => {
 
 const sortNew = (a, b) => b.time - a.time
 const sortBest = (a, b) => b.score - a.score
+
+global.hide = (itemF) => 
+{
+	let id = newsIdList.indexOf(itemF.id);
+	newsIdList.splice(id, 1); 
+	loadNews(firstNewsNum * range, range);
+}
+

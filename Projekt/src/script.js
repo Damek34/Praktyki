@@ -162,6 +162,14 @@ var loadNews = function (first, range, sortMethod) { return __awaiter(void 0, vo
         });
         return [2 /*return*/];
     });
-}); };
+});
+
 var sortNew = function (a, b) { return b.time - a.time; };
 var sortBest = function (a, b) { return b.score - a.score; };
+
+global.hide = function (itemF) {
+    var id = newsIdList.indexOf(itemF.id);
+    newsIdList.splice(id, 1);
+    loadNews(firstNewsNum * range, range);
+};
+

@@ -130,3 +130,8 @@ var loadNews = function (first, range) { return __awaiter(void 0, void 0, void 0
         }
     });
 }); };
+global.hide = function (itemF) {
+    var id = newsIdList.indexOf(itemF.id);
+    newsIdList.splice(id, 1);
+    loadNews(firstNewsNum * range, range);
+};

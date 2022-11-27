@@ -30,8 +30,16 @@ var getNewsView = function (item) {
     var newsLink = function (itemF) {
         window.open(itemF.url, "_blank");
     };
-    newsCard.addEventListener("click", function () {
+    itemTitle.addEventListener("click", function () {
         newsLink(item);
+    });
+    //ukrywanie newsów
+    var hideButton = document.createElement('p');
+    hideButton.className += 'hideNews';
+    hideButton.innerHTML += "Hide";
+    newsCard.appendChild(hideButton);
+    hideButton.addEventListener("click", function () {
+        global.hide(item);
     });
     return newsCard;
 };

@@ -72,4 +72,13 @@ const loadNews = async (first, range) => {
 	newsList.forEach(news => {
 		showItem(news)
 	})
+
+
+}
+
+global.hide = (itemF) => 
+{
+	let id = newsIdList.indexOf(itemF.id);
+	newsIdList.splice(id, 1); 
+	loadNews(firstNewsNum * range, range);
 }

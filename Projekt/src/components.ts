@@ -3,17 +3,18 @@ export const getNewsView = (item) => {
 	newsCard.className += 'card my-4'
 	let itemHeader = document.createElement('div')
 	itemHeader.className += 'card-header inline-flex'
-	let itemFooter = document.createElement('div')
+	let itemFooter = document.createElement('footer')
 	itemFooter.className += 'card-footer'
 
 	let itemTitle = document.createElement('p')
 	itemTitle.innerHTML = item.title
 	itemTitle.className += 'card-header-title'
-	// itemTitle.setAttribute('style', 'width: 60%')
+	itemTitle.setAttribute('style', 'cursor: pointer')
 
 	let itemScore = document.createElement('p')
 	itemScore.innerHTML = item.score
-	itemScore.setAttribute('style', 'width: 10%; text-algin:center')
+	itemScore.setAttribute('style', 'width: 5%; text-align:center')
+	itemScore.className += 'card-header-icon'
 
 	itemHeader.appendChild(itemTitle)
 	itemHeader.appendChild(itemScore)
@@ -31,6 +32,19 @@ export const getNewsView = (item) => {
 	itemDate.innerHTML += date.toLocaleDateString()
 	itemDate.innerHTML += " " + date.toLocaleTimeString('pl-PL')
 	itemDate.className += 'card-footer-item has-text-right'
+
+	//ukrywanie newsów
+	let hideButton = document.createElement('p');
+	hideButton.className += 'hideNews card-footer-item';
+
+	hideButton.innerHTML += "<i class='fa-solid fa-eye-slash'></i>Hide";
+	hideButton.setAttribute('style', 'cursor: pointer')
+	itemFooter.appendChild(hideButton);
+
+	hideButton.addEventListener("click", function()
+	{
+		global.hide(item);
+	});
 	itemFooter.appendChild(itemDate)
 
 	newsCard.appendChild(itemFooter)
@@ -47,19 +61,8 @@ export const getNewsView = (item) => {
 	});
 
 
-	//ukrywanie newsów
-	let hideButton = document.createElement('p');
-	hideButton.className += 'hideNews';
 
-	hideButton.innerHTML += "Hide";
-	newsCard.appendChild(hideButton);
 
-	hideButton.addEventListener("click", function()
-	{
-		global.hide(item);
-	});
-
-	
 
 	return newsCard
 }

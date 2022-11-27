@@ -1,0 +1,7 @@
+.hideNews{
+	transition: 200ms;
+}
+
+.hideNews:hover {
+	background-color: #d6d6d6;
+}

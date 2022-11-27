@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,60 +34,47 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-exports.__esModule = true;
-var components_1 = require("./components");
-var newsIdList;
-var newsList;
-var firstNewsNum = 0;
-var range = 30;
+var _this = this;
+var arr;
+var range;
 global.ChangeRange = function () {
     var select = document.getElementById("number_of_news");
-    range = parseInt(select.value);
-    loadNews(firstNewsNum * range, range);
+    range = select.value;
+    console.log(range);
+    showNews(firstNews, parseInt(range));
 };
-global.prevPage = function () {
-    if (firstNewsNum > 0) {
-        firstNewsNum -= 1;
-        var p = document.getElementById('pageNumber');
-        p.innerHTML = firstNewsNum.toString();
-        loadNews(firstNewsNum * range, range);
-    }
-};
-global.nextPage = function () {
-    firstNewsNum += 1;
-    var p = document.getElementById('pageNumber');
-    p.innerHTML = firstNewsNum.toString();
-    loadNews(firstNewsNum * range, range);
-};
+var firstNews = 0;
 // zwraca tablice z id nowych newsow
-var getNewsIdList = function () { return __awaiter(void 0, void 0, void 0, function () {
+var getNewsIdList = function (first, range) { return __awaiter(_this, void 0, void 0, function () {
+    var _this = this;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, fetch('https://hacker-news.firebaseio.com/v0/newstories.json?type=story')
                     .then(function (result) { return result.json(); })
-                    .then(function (newsIdList) {
-                    return newsIdList;
-                })];
-            case 1: return [2 /*return*/, _a.sent()];
-        }
-    });
-}); };
-// zwraca tablice newsow
-var getNewsList = function (first, range) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, Promise.all(newsIdList.slice(first, first + range).map(function (newsId) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, getNewsData(newsId)];
-                        case 1: return [2 /*return*/, _a.sent()];
-                    }
-                }); }); }))];
+                    .then(function (newsIdList) { return __awaiter(_this, void 0, void 0, function () {
+                    var _this = this;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                newsIdList = newsIdList.slice(first, range);
+                                return [4 /*yield*/, Promise.all(newsIdList.map(function (newsId) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, getNews(newsId)];
+                                            case 1: return [2 /*return*/, _a.sent()];
+                                        }
+                                    }); }); }))];
+                            case 1:
+                                arr = _a.sent();
+                                return [2 /*return*/, arr];
+                        }
+                    });
+                }); })];
             case 1: return [2 /*return*/, _a.sent()];
         }
     });
 }); };
 // zwraca obiekt news
-var getNewsData = function (id) { return __awaiter(void 0, void 0, void 0, function () {
+var getNews = function (id) { return __awaiter(_this, void 0, void 0, function () {
     var data, news;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -102,31 +88,51 @@ var getNewsData = function (id) { return __awaiter(void 0, void 0, void 0, funct
         }
     });
 }); };
-// konwertuje dane na html i wyświetla
 var showItem = function (item) {
     var list = document.getElementById('newsList');
-    list === null || list === void 0 ? void 0 : list.appendChild((0, components_1.getNewsView)(item));
+    var listElement = document.createElement('div');
+    listElement.className += 'card my-4';
+    var itemHeader = document.createElement('div');
+    itemHeader.className += 'card-header';
+    var itemFooter = document.createElement('div');
+    itemFooter.className += 'card-footer';
+    var itemTitle = document.createElement('p');
+    itemTitle.innerHTML = item.title;
+    itemTitle.className += 'card-header-title';
+    itemHeader.appendChild(itemTitle);
+    listElement.appendChild(itemHeader);
+    if (item.text != null) {
+        var itemBody = document.createElement('p');
+        itemBody.innerHTML = item.text;
+        itemBody.className += 'card-content';
+        listElement.appendChild(itemBody);
+    }
+    var itemDate = document.createElement('p');
+    var date = new Date(item.time * 1000);
+    itemDate.innerHTML += date.toLocaleDateString();
+    itemDate.innerHTML += " " + date.toLocaleTimeString('pl-PL');
+    itemDate.className += 'card-footer-item has-text-right';
+    itemFooter.appendChild(itemDate);
+    listElement.appendChild(itemFooter);
+    list === null || list === void 0 ? void 0 : list.appendChild(listElement);
+    //otwieranie linku
+    var newsLink = function (itemF) {
+        window.open(itemF.url, "_blank");
+    };
+    listElement.addEventListener("click", function () {
+        newsLink(item);
+    });
 };
-// pobiera newsy gdy załaduje strone
-global.onloadFun = function () { return getNewsIdList().then(function (list) {
-    newsIdList = list;
-    loadNews(firstNewsNum * range, range);
-}); };
-// pobiera dane
-var loadNews = function (first, range) { return __awaiter(void 0, void 0, void 0, function () {
-    var newsListHTML;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, getNewsList(first, range)];
-            case 1:
-                newsList = _a.sent();
-                newsListHTML = document.getElementById('newsList');
-                newsListHTML.innerHTML = "";
-                newsList.sort(function (a, b) { return b.time - a.time; });
-                newsList.forEach(function (news) {
-                    showItem(news);
-                });
-                return [2 /*return*/];
-        }
+var showNews = function (first, range) { return getNewsIdList(first, range).then(function (list) {
+    document.getElementById('newsList').innerHTML = "";
+    list.sort(function (a, b) { return a.time - b.time; });
+    list.forEach(function (news) {
+        showItem(news);
     });
 }); };
+/*const newsLink = (item) =>
+    {
+        window.open (item.url, "_blank");
+    }
+*/
+showNews(firstNews, range);

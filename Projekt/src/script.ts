@@ -10,6 +10,7 @@ let askStoryList
 let jobStoryList
 let topStoryList
 let bestStoryList
+var keyword = " ";
 
 global.ChangeRange = () =>
 {
@@ -123,6 +124,8 @@ const showItem = (item) => {
 
 // pobiera newsy gdy załaduje strone
 global.onloadFun = () => getNewsIdList().then(async (list)=> {
+
+
 	newsIdList = list
 	sortingType = sortNew
 	newsList = await getNewsList()
@@ -156,12 +159,38 @@ const loadNews = async (first, range, sortMethod, list: Array<Object>) => {
 		options.innerHTML = ""
 	}
 
-	list.sort((a, b) => sortMethod(a, b))
+
+
+	if(keyword != "")
+	{
+		list = list.filter(news => filtr(news));
+	
+		
+	}
+		list.sort((a, b) => sortMethod(a, b))
 
 	list.slice(first * range, first*range + range).forEach(news => {
 		showItem(news)
 	})
+	
 }
+
+
+global.Search = () =>
+{
+	let Keyword = document.getElementById("Search") as HTMLSelectElement;
+	keyword = Keyword.value;
+	loadNews(firstNewsNum, range, sortingType, curNewsList);
+}
+
+function filtr(item)
+{
+	keyword.toLowerCase();
+	item.title.toLowerCase();
+	return item.title.includes(keyword)
+}
+
+
 
 const sortNew = (a, b) => b.time - a.time
 const sortOld = (a, b) => a.time - b.time
@@ -171,14 +200,14 @@ global.hide = (itemF) =>
 {
 	let id = curNewsList.indexOf(itemF);
 	curNewsList.splice(id, 1);
-	loadNews(firstNewsNum * range, range, sortingType, curNewsList);
+	loadNews(firstNewsNum, range, sortingType, curNewsList);
 }
 
 global.addToJobList = (item) => {
 	jobStoryList.push(item)
-	loadNews(firstNewsNum * range, range, sortingType, curNewsList);
+	loadNews(firstNewsNum, range, sortingType, curNewsList);
 }
 global.addToAskList = (item) => {
 	askStoryList.push(item)
-	loadNews(firstNewsNum * range, range, sortingType, curNewsList);
+	loadNews(firstNewsNum, range, sortingType, curNewsList);
 }

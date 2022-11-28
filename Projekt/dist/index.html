@@ -10,6 +10,7 @@
 	<title>Document</title>
 </head>
 <body onload="onloadFun()">
+	
 	<div class="container">
 
 		<div class="field is-grouped">
@@ -41,6 +42,10 @@
 					<option value = "job">Job</option>
 				</select>
 			</div>
+			<div class="SearchDiv">
+				<input type="text" id="Search">
+				<input type="button" value="Search" onclick="Search()">
+			</div>
 		</div>
 		<section class="" id="additional-options">
 
@@ -54,7 +59,6 @@
 			<button class="button" onclick="nextPage()"><i class="fa-solid fa-arrow-right"></i></button>
 		</div>
 	</div>
-
 
 	<script src="./main.js"></script>
 </body>

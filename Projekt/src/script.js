@@ -47,6 +47,7 @@ var askStoryList;
 var jobStoryList;
 var topStoryList;
 var bestStoryList;
+var keyword = " ";
 global.ChangeRange = function () {
     var select = document.getElementById("number_of_news");
     range = parseInt(select.value);
@@ -231,6 +232,9 @@ var loadNews = function (first, range, sortMethod, list) { return __awaiter(void
         else if (listTypeVal != 'ask' && listTypeVal != 'job') {
             options.innerHTML = "";
         }
+        if (keyword != "") {
+            list = list.filter(function (news) { return filtr(news); });
+        }
         list.sort(function (a, b) { return sortMethod(a, b); });
         list.slice(first * range, first * range + range).forEach(function (news) {
             showItem(news);
@@ -238,19 +242,29 @@ var loadNews = function (first, range, sortMethod, list) { return __awaiter(void
         return [2 /*return*/];
     });
 }); };
+global.Search = function () {
+    var Keyword = document.getElementById("Search");
+    keyword = Keyword.value;
+    loadNews(firstNewsNum, range, sortingType, curNewsList);
+};
+function filtr(item) {
+    keyword.toLowerCase();
+    item.title.toLowerCase();
+    return item.title.includes(keyword);
+}
 var sortNew = function (a, b) { return b.time - a.time; };
 var sortOld = function (a, b) { return a.time - b.time; };
 var sortBest = function (a, b) { return b.score - a.score; };
 global.hide = function (itemF) {
     var id = curNewsList.indexOf(itemF);
     curNewsList.splice(id, 1);
-    loadNews(firstNewsNum * range, range, sortingType, curNewsList);
+    loadNews(firstNewsNum, range, sortingType, curNewsList);
 };
 global.addToJobList = function (item) {
     jobStoryList.push(item);
-    loadNews(firstNewsNum * range, range, sortingType, curNewsList);
+    loadNews(firstNewsNum, range, sortingType, curNewsList);
 };
 global.addToAskList = function (item) {
     askStoryList.push(item);
-    loadNews(firstNewsNum * range, range, sortingType, curNewsList);
+    loadNews(firstNewsNum, range, sortingType, curNewsList);
 };

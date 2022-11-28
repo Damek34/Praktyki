@@ -175,3 +175,26 @@ const addForm = (formtitle, label1, label2, onsubmit: Function, formType):Node =
 	form.appendChild(subField)
 	return form
 }
+/*global.SearchKeyWord = () =>
+{
+	let SearchDiv = document.createElement('div');
+	SearchDiv.className += 'SearchDiv';
+	let search = document.createElement('INPUT');
+	search.className += 'SearchKeyword';
+
+	SearchDiv.appendChild(search);
+
+	let SearchButton = document.createElement('BUTTON');
+	SearchButton.className += 'SearchButton';
+
+	SearchDiv.appendChild(SearchButton);
+	
+
+	SearchButton.addEventListener("click", function()
+	{
+	global.SearchKW()
+	});
+
+	
+}
+*/

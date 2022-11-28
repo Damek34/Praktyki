@@ -1,4 +1,4 @@
-import { getNewsView } from "./components";
+import { getAddJobBtn, getAddAskBtn, getNewsView } from "./components";
 
 let newsIdList
 let newsList
@@ -142,6 +142,20 @@ const loadNews = async (first, range, sortMethod, list: Array<Object>) => {
 	let newsListHTML = document.getElementById('newsList') as HTMLDivElement;
 	newsListHTML.innerHTML = ""
 
+	let options = document.getElementById('additional-options') as HTMLDivElement
+	let listType = document.getElementById('newsType') as HTMLSelectElement
+	let listTypeVal = listType.value
+
+	if(listTypeVal == 'job') {
+		options.innerHTML = ""
+		options.appendChild(getAddJobBtn())
+	}else if (listTypeVal == 'ask'){
+		options.innerHTML = ""
+		options.appendChild(getAddAskBtn())
+	} else if (listTypeVal != 'ask' && listTypeVal != 'job') {
+		options.innerHTML = ""
+	}
+
 	list.sort((a, b) => sortMethod(a, b))
 
 	list.slice(first * range, first*range + range).forEach(news => {
@@ -155,8 +169,16 @@ const sortBest = (a, b) => b.score - a.score
 
 global.hide = (itemF) =>
 {
-	let id = newsList.indexOf(itemF);
-	newsList.splice(id, 1);
+	let id = curNewsList.indexOf(itemF);
+	curNewsList.splice(id, 1);
 	loadNews(firstNewsNum * range, range, sortingType, curNewsList);
 }
 
+global.addToJobList = (item) => {
+	jobStoryList.push(item)
+	loadNews(firstNewsNum * range, range, sortingType, curNewsList);
+}
+global.addToAskList = (item) => {
+	askStoryList.push(item)
+	loadNews(firstNewsNum * range, range, sortingType, curNewsList);
+}

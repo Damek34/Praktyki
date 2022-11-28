@@ -1,6 +1,16 @@
 "use strict";
 exports.__esModule = true;
-exports.getNewsView = void 0;
+exports.getAddAskBtn = exports.getAddJobBtn = exports.getNewsView = void 0;
+var createDiv = function (classname) {
+    var div = document.createElement('div');
+    div.className = classname;
+    return div;
+};
+var createElement = function (element, classname) {
+    var el = document.createElement(element);
+    el.className = classname;
+    return el;
+};
 var getNewsView = function (item) {
     var newsCard = document.createElement('div');
     newsCard.className += 'card my-4';
@@ -51,3 +61,86 @@ var getNewsView = function (item) {
     return newsCard;
 };
 exports.getNewsView = getNewsView;
+var getAddJobBtn = function () {
+    var btn = createElement('button', 'button is-primary');
+    btn.innerHTML = 'Add job offer';
+    btn.addEventListener('click', function () {
+        var _a;
+        var options = btn.parentNode;
+        if (options.getElementsByTagName('form').length == 0)
+            (_a = btn.parentNode) === null || _a === void 0 ? void 0 : _a.appendChild(addForm('Add job offer', 'Title', 'Description', global.addToJobList, 'job'));
+    });
+    return btn;
+};
+exports.getAddJobBtn = getAddJobBtn;
+var getAddAskBtn = function () {
+    var btn = createElement('button', 'button is-primary');
+    btn.innerHTML = 'Ask question';
+    btn.addEventListener('click', function () {
+        var _a;
+        var options = btn.parentNode;
+        if (options.getElementsByTagName('form').length == 0)
+            (_a = btn.parentNode) === null || _a === void 0 ? void 0 : _a.appendChild(addForm('Ask question', 'Title', 'Description', global.addToAskList, 'ask'));
+    });
+    return btn;
+};
+exports.getAddAskBtn = getAddAskBtn;
+var addForm = function (formtitle, label1, label2, onsubmit, formType) {
+    var form = createElement('form', 'panel');
+    // Heading
+    var panelHeading = createElement('div', 'panel-heading notification');
+    var header = createElement('p', '');
+    header.innerHTML = formtitle;
+    var close = createElement('button', 'delete');
+    close.type = 'button';
+    close.addEventListener('click', function () {
+        var options = form.parentNode;
+        options.removeChild(form);
+    });
+    panelHeading.appendChild(header);
+    panelHeading.appendChild(close);
+    // Panel block
+    var panelBlock = createElement('div', 'content');
+    panelBlock.setAttribute('style', 'padding: .5em .75em;');
+    // Job title
+    var titleField = createDiv('field');
+    var titleLabel = createElement('label', 'label');
+    titleLabel.innerHTML = label1;
+    var titleControl = createDiv('control');
+    var titleInput = createElement('input', 'input');
+    titleControl.appendChild(titleInput);
+    titleField.appendChild(titleLabel);
+    titleField.appendChild(titleControl);
+    // Job description
+    var descField = createDiv('field');
+    var descLabel = createElement('label', 'label');
+    descLabel.innerHTML = label2;
+    var descControl = createDiv('control');
+    var textArea = createElement('textarea', 'textarea is-info');
+    descControl.appendChild(textArea);
+    descField.appendChild(descLabel);
+    descField.appendChild(descControl);
+    // Submit
+    var subField = createDiv('control');
+    var btn = createElement('button', 'button is-success');
+    btn.innerHTML = 'Submit';
+    btn.type = 'button';
+    btn.addEventListener('click', function () {
+        var item = {
+            title: titleInput.value,
+            text: textArea.value,
+            type: formType,
+            time: Date.now() / 1000,
+            score: 0
+        };
+        onsubmit(item);
+    });
+    subField.appendChild(btn);
+    //
+    form.appendChild(panelHeading);
+    panelBlock.appendChild(titleField);
+    panelBlock.appendChild(descField);
+    form.appendChild(panelBlock);
+    form.appendChild(subField);
+    return form;
+};

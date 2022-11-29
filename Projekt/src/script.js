@@ -48,26 +48,11 @@ var jobStoryList;
 var topStoryList;
 var bestStoryList;
 var keyword = " ";
+var date = "";
 global.ChangeRange = function () {
     var select = document.getElementById("number_of_news");
     range = parseInt(select.value);
     loadNews(firstNewsNum, range, sortingType, curNewsList);
-};
-global.prevPage = function () {
-    if (firstNewsNum > 0) {
-        firstNewsNum -= 1;
-        var p = document.getElementById('pageNumber');
-        p.innerHTML = firstNewsNum.toString();
-        loadNews(firstNewsNum, range, sortingType, curNewsList);
-    }
-};
-global.nextPage = function () {
-    if (firstNewsNum <= curNewsList.length / range) {
-        firstNewsNum += 1;
-        var p = document.getElementById('pageNumber');
-        p.innerHTML = firstNewsNum.toString();
-        loadNews(firstNewsNum, range, sortingType, curNewsList);
-    }
 };
 global.changeSortingType = function () {
     var select = document.getElementById("sortingType");
@@ -89,6 +74,8 @@ global.changeSortingType = function () {
 };
 global.changeNewsType = function () {
     var select = document.getElementById("newsType");
+    keyword = " ";
+    date = "";
     switch (select.value) {
         case "today":
             curNewsList = newsList;
@@ -206,7 +193,7 @@ global.onloadFun = function () { return getNewsIdList().then(function (list) { r
             case 5:
                 bestStoryList = _a.sent();
                 sel1 = document.getElementById('newsTypeDiv');
-                sel1.className = "select";
+                sel1.className = "control select";
                 console.log("all loaded");
                 return [2 /*return*/];
         }
@@ -229,16 +216,39 @@ var loadNews = function (first, range, sortMethod, list) { return __awaiter(void
             options.innerHTML = "";
             options.appendChild((0, components_1.getAddAskBtn)());
         }
+        else if (listTypeVal == 'past') {
+            options.innerHTML = "";
+            options.appendChild((0, components_1.getFilterByDate)());
+        }
         else if (listTypeVal != 'ask' && listTypeVal != 'job') {
             options.innerHTML = "";
         }
         if (keyword != "") {
             list = list.filter(function (news) { return filtr(news); });
         }
+        if (date != "") {
+            list = list.filter(function (news) { return filterByDate(news); });
+        }
         list.sort(function (a, b) { return sortMethod(a, b); });
         list.slice(first * range, first * range + range).forEach(function (news) {
             showItem(news);
         });
+        global.prevPage = function () {
+            if (firstNewsNum > 0) {
+                firstNewsNum -= 1;
+                var p = document.getElementById('pageNumber');
+                p.innerHTML = firstNewsNum.toString();
+                loadNews(firstNewsNum, range, sortingType, curNewsList);
+            }
+        };
+        global.nextPage = function () {
+            if (firstNewsNum <= (list.length / range) - 1) {
+                firstNewsNum += 1;
+                var p = document.getElementById('pageNumber');
+                p.innerHTML = firstNewsNum.toString();
+                loadNews(firstNewsNum, range, sortingType, curNewsList);
+            }
+        };
         return [2 /*return*/];
     });
 }); };
@@ -248,10 +258,18 @@ global.Search = function () {
     loadNews(firstNewsNum, range, sortingType, curNewsList);
 };
 function filtr(item) {
-    keyword.toLowerCase();
-    item.title.toLowerCase();
-    return item.title.includes(keyword);
+    return item.title.toLowerCase().includes(keyword.toLowerCase());
 }
+global.onClickSearchDate = function () {
+    var dateInput = document.getElementById('inputDate');
+    date = dateInput.value;
+    loadNews(firstNewsNum, range, sortingType, curNewsList);
+};
+var filterByDate = function (item) {
+    var itemDate = new Date(item.time * 1000).toDateString();
+    var wantedDate = new Date(date).toDateString();
+    return wantedDate.localeCompare(itemDate) == 0;
+};
 var sortNew = function (a, b) { return b.time - a.time; };
 var sortOld = function (a, b) { return a.time - b.time; };
 var sortBest = function (a, b) { return b.score - a.score; };
@@ -267,4 +285,7 @@ global.addToJobList = function (item) {
 global.addToAskList = function (item) {
     askStoryList.push(item);
     loadNews(firstNewsNum, range, sortingType, curNewsList);
+};
+global.filterByDate = function (item) {
+    return new Date(item.time).toDateString;
 };

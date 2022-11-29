@@ -101,6 +101,27 @@ export const getAddAskBtn = () => {
 	return btn
 }
 
+export const getFilterByDate = () => {
+	let input = createElement('input', 'input') as HTMLInputElement
+	input.setAttribute('type', 'date')
+	input.min = new Date(Date.now()).toLocaleDateString()
+	input.id = 'inputDate'
+
+	let controlInput = createDiv('control')
+	controlInput.appendChild(input)
+	let btn = createElement('button', 'button is-info') as HTMLButtonElement
+	let controlBtn = createDiv('control')
+	controlBtn.appendChild(btn)
+	btn.innerHTML = 'Search'
+	btn.addEventListener('click', global.onClickSearchDate)
+	btn.type = 'button'
+
+	let group = createDiv('field has-addons')
+	group.appendChild(controlInput)
+	group.appendChild(controlBtn)
+	return group
+}
+
 
 const addForm = (formtitle, label1, label2, onsubmit: Function, formType):Node => {
 	let form = createElement('form', 'panel')
@@ -188,13 +209,13 @@ const addForm = (formtitle, label1, label2, onsubmit: Function, formType):Node =
 	SearchButton.className += 'SearchButton';
 
 	SearchDiv.appendChild(SearchButton);
-	
+
 
 	SearchButton.addEventListener("click", function()
 	{
 	global.SearchKW()
 	});
 
-	
+
 }
 */

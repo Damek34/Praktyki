@@ -10,10 +10,10 @@
 	<title>Document</title>
 </head>
 <body onload="onloadFun()">
-	
+
 	<div class="container">
 
-		<div class="field is-grouped">
+		<div class="field is-grouped" style="padding-top: 15px">
 			<div class="control select">
 				<select id="number_of_news" onchange="ChangeRange()">
 					<option value = "5" >5</option>
@@ -42,9 +42,15 @@
 					<option value = "job">Job</option>
 				</select>
 			</div>
-			<div class="SearchDiv">
-				<input type="text" id="Search">
-				<input type="button" value="Search" onclick="Search()">
+			<div class="control">
+				<div class="SearchDiv field has-addons">
+					<div class="control">
+						<input type="text" id="Search" class="input" placeholder="Keyword">
+					</div>
+					<div class="control">
+						<input type="button" value="Search" onclick="Search()" class="button is-info" >
+					</div>
+				</div>
 			</div>
 		</div>
 		<section class="" id="additional-options">

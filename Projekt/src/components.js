@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-exports.getAddAskBtn = exports.getAddJobBtn = exports.getNewsView = void 0;
+exports.getFilterByDate = exports.getAddAskBtn = exports.getAddJobBtn = exports.getNewsView = void 0;
 var createDiv = function (classname) {
     var div = document.createElement('div');
     div.className = classname;
@@ -85,6 +85,25 @@ var getAddAskBtn = function () {
     return btn;
 };
 exports.getAddAskBtn = getAddAskBtn;
+var getFilterByDate = function () {
+    var input = createElement('input', 'input');
+    input.setAttribute('type', 'date');
+    input.min = new Date(Date.now()).toLocaleDateString();
+    input.id = 'inputDate';
+    var controlInput = createDiv('control');
+    controlInput.appendChild(input);
+    var btn = createElement('button', 'button is-info');
+    var controlBtn = createDiv('control');
+    controlBtn.appendChild(btn);
+    btn.innerHTML = 'Search';
+    btn.addEventListener('click', global.onClickSearchDate);
+    btn.type = 'button';
+    var group = createDiv('field has-addons');
+    group.appendChild(controlInput);
+    group.appendChild(controlBtn);
+    return group;
+};
+exports.getFilterByDate = getFilterByDate;
 var addForm = function (formtitle, label1, label2, onsubmit, formType) {
     var form = createElement('form', 'panel');
     // Heading
@@ -157,13 +176,13 @@ var addForm = function (formtitle, label1, label2, onsubmit, formType) {
     SearchButton.className += 'SearchButton';
 
     SearchDiv.appendChild(SearchButton);
-    
+
 
     SearchButton.addEventListener("click", function()
     {
     global.SearchKW()
     });
 
-    
+
 }
 */ 

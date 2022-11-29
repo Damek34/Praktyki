@@ -1,4 +1,4 @@
-import { getAddJobBtn, getAddAskBtn, getNewsView } from "./components";
+import { getAddJobBtn, getAddAskBtn, getNewsView, getFilterByDate } from "./components";
 
 let newsIdList
 let newsList
@@ -11,6 +11,7 @@ let jobStoryList
 let topStoryList
 let bestStoryList
 var keyword = " ";
+let date = ""
 
 global.ChangeRange = () =>
 {
@@ -19,26 +20,11 @@ global.ChangeRange = () =>
 	loadNews(firstNewsNum, range, sortingType, curNewsList);
 }
 
-global.prevPage = () => {
-	if(firstNewsNum > 0) {
-		firstNewsNum -= 1;
-		let p = document.getElementById('pageNumber') as HTMLParagraphElement
-		p.innerHTML = firstNewsNum.toString()
-		loadNews(firstNewsNum, range, sortingType, curNewsList);
-	}
-}
 
-global.nextPage = () => {
-	if (firstNewsNum <= curNewsList.length / range) {
-		firstNewsNum += 1;
-		let p = document.getElementById('pageNumber') as HTMLParagraphElement
-		p.innerHTML = firstNewsNum.toString()
-		loadNews(firstNewsNum, range, sortingType, curNewsList);
-	}
-}
 
 global.changeSortingType = () => {
 	let select = document.getElementById("sortingType") as HTMLSelectElement;
+
 	switch (select.value) {
 		case "new":
 			sortingType = sortNew
@@ -60,6 +46,9 @@ global.changeSortingType = () => {
 
 global.changeNewsType = () => {
 	let select = document.getElementById("newsType") as HTMLSelectElement;
+	keyword = " ";
+	date = ""
+
 	switch (select.value) {
 		case "today":
 			curNewsList = newsList
@@ -136,7 +125,7 @@ global.onloadFun = () => getNewsIdList().then(async (list)=> {
 	topStoryList = await getStoriesList('topstories')
 	bestStoryList = await getStoriesList('beststories')
 	let sel1 = document.getElementById('newsTypeDiv') as HTMLSelectElement
-	sel1.className = "select"
+	sel1.className = "control select"
 	console.log("all loaded");
 })
 
@@ -155,7 +144,10 @@ const loadNews = async (first, range, sortMethod, list: Array<Object>) => {
 	}else if (listTypeVal == 'ask'){
 		options.innerHTML = ""
 		options.appendChild(getAddAskBtn())
-	} else if (listTypeVal != 'ask' && listTypeVal != 'job') {
+	}else if (listTypeVal == 'past'){
+		options.innerHTML = ""
+		options.appendChild(getFilterByDate())
+	}else if (listTypeVal != 'ask' && listTypeVal != 'job') {
 		options.innerHTML = ""
 	}
 
@@ -164,15 +156,35 @@ const loadNews = async (first, range, sortMethod, list: Array<Object>) => {
 	if(keyword != "")
 	{
 		list = list.filter(news => filtr(news));
-	
-		
 	}
-		list.sort((a, b) => sortMethod(a, b))
+	if(date != "") {
+		list = list.filter(news => filterByDate(news))
+	}
+
+	list.sort((a, b) => sortMethod(a, b))
 
 	list.slice(first * range, first*range + range).forEach(news => {
 		showItem(news)
 	})
-	
+
+	global.prevPage = () => {
+		if(firstNewsNum > 0) {
+			firstNewsNum -= 1;
+			let p = document.getElementById('pageNumber') as HTMLParagraphElement
+			p.innerHTML = firstNewsNum.toString()
+			loadNews(firstNewsNum, range, sortingType, curNewsList);
+		}
+	}
+
+	global.nextPage = () => {
+		if (firstNewsNum <= (list.length / range) - 1) {
+			firstNewsNum += 1;
+			let p = document.getElementById('pageNumber') as HTMLParagraphElement
+			p.innerHTML = firstNewsNum.toString()
+			loadNews(firstNewsNum, range, sortingType, curNewsList);
+		}
+	}
+
 }
 
 
@@ -185,11 +197,20 @@ global.Search = () =>
 
 function filtr(item)
 {
-	keyword.toLowerCase();
-	item.title.toLowerCase();
-	return item.title.includes(keyword)
+	return item.title.toLowerCase().includes(keyword.toLowerCase())
 }
 
+global.onClickSearchDate = () => {
+	let dateInput = document.getElementById('inputDate') as HTMLInputElement
+	date = dateInput.value
+	loadNews(firstNewsNum, range, sortingType, curNewsList);
+}
+
+const filterByDate = (item) => {
+	let itemDate = new Date(item.time * 1000).toDateString()
+	let wantedDate = new Date(date).toDateString()
+	return wantedDate.localeCompare(itemDate) == 0
+}
 
 
 const sortNew = (a, b) => b.time - a.time
@@ -210,4 +231,9 @@ global.addToJobList = (item) => {
 global.addToAskList = (item) => {
 	askStoryList.push(item)
 	loadNews(firstNewsNum, range, sortingType, curNewsList);
+}
+
+global.filterByDate = (item) => {
+
+	return new Date(item.time).toDateString
 }

@@ -129,6 +129,9 @@ const addForm = (formtitle, label1, label2, onsubmit: Function, formType):Node =
 	// Heading
 	let panelHeading = createElement('div', 'panel-heading notification')
 	let header = createElement('p', '')
+
+	panelHeading.setAttribute('style', 'margin-top: 10px;');
+
 	header.innerHTML = formtitle
 
 	let close = createElement('button', 'delete')
@@ -170,9 +173,10 @@ const addForm = (formtitle, label1, label2, onsubmit: Function, formType):Node =
 	descField.appendChild(descControl)
 
 	// Submit
-	let subField = createDiv('control')
+	let subField = createDiv('control is-inline-flex is-justify-content-right')
 	let btn = createElement('button', 'button is-success') as HTMLButtonElement
 	btn.innerHTML = 'Submit'
+	subField.setAttribute('style', 'width: 100%; padding-bottom: 15px; padding-right: 15px;');
 
 
 	btn.type = 'button'
@@ -196,26 +200,3 @@ const addForm = (formtitle, label1, label2, onsubmit: Function, formType):Node =
 	form.appendChild(subField)
 	return form
 }
-/*global.SearchKeyWord = () =>
-{
-	let SearchDiv = document.createElement('div');
-	SearchDiv.className += 'SearchDiv';
-	let search = document.createElement('INPUT');
-	search.className += 'SearchKeyword';
-
-	SearchDiv.appendChild(search);
-
-	let SearchButton = document.createElement('BUTTON');
-	SearchButton.className += 'SearchButton';
-
-	SearchDiv.appendChild(SearchButton);
-
-
-	SearchButton.addEventListener("click", function()
-	{
-	global.SearchKW()
-	});
-
-
-}
-*/

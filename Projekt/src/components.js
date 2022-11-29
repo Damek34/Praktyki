@@ -109,6 +109,7 @@ var addForm = function (formtitle, label1, label2, onsubmit, formType) {
     // Heading
     var panelHeading = createElement('div', 'panel-heading notification');
     var header = createElement('p', '');
+    panelHeading.setAttribute('style', 'margin-top: 10px;');
     header.innerHTML = formtitle;
     var close = createElement('button', 'delete');
     close.type = 'button';
@@ -140,9 +141,10 @@ var addForm = function (formtitle, label1, label2, onsubmit, formType) {
     descField.appendChild(descLabel);
     descField.appendChild(descControl);
     // Submit
-    var subField = createDiv('control');
+    var subField = createDiv('control is-inline-flex is-justify-content-right');
     var btn = createElement('button', 'button is-success');
     btn.innerHTML = 'Submit';
+    subField.setAttribute('style', 'width: 100%; padding-bottom: 15px; padding-right: 15px;');
     btn.type = 'button';
     btn.addEventListener('click', function () {
         var item = {
@@ -163,26 +165,3 @@ var addForm = function (formtitle, label1, label2, onsubmit, formType) {
     form.appendChild(subField);
     return form;
 };
-/*global.SearchKeyWord = () =>
-{
-    let SearchDiv = document.createElement('div');
-    SearchDiv.className += 'SearchDiv';
-    let search = document.createElement('INPUT');
-    search.className += 'SearchKeyword';
-
-    SearchDiv.appendChild(search);
-
-    let SearchButton = document.createElement('BUTTON');
-    SearchButton.className += 'SearchButton';
-
-    SearchDiv.appendChild(SearchButton);
-
-
-    SearchButton.addEventListener("click", function()
-    {
-    global.SearchKW()
-    });
-
-
-}
-*/ 
